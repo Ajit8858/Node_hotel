@@ -10,8 +10,10 @@ const Person = require('./model/person');
 
 app.use(express.json());
 const logRequest = (req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
     next();
-}
+};
+
 app.use(logRequest);
 passport.use(new LocalStrategy(async (username, password, done) =>{
     try{
@@ -22,11 +24,11 @@ passport.use(new LocalStrategy(async (username, password, done) =>{
                 message: 'Incorrect username'});
         }
 
-        const isPassward = user.password == password ? true : false;
+        const isPassward = user.password === password ? true : false;
         if(isPassward){
             return done(null, user);
         }else{
-            return done(null, false, {message:'Incorrect passward'});
+            return done(null, false, {message:'Incorrect password'});
         }
     }catch(err){
         return done(err);
@@ -42,7 +44,7 @@ app.get('/',localAuthMiddleware, (req, res) => {
 
 const personRoute = require('./routes/personRoutes'); 
 const menuRoute = require('./routes/menuRoutes');
-app.use('/person',localAuthMiddleware, personRoute);
+app.use('/person', personRoute);
 app.use('/menu',localAuthMiddleware, menuRoute);
 
 app.listen(PORT, () => {
